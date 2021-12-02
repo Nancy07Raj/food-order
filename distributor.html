@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>index</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <style>
+    #addRestaurant {
+      position: absolute;
+      top: 50px;
+      background-color: #c7bea2;
+      left: 300px;
+    }
+    input {
+      width: 400px;
+      height: 40px;
+      border-radius: 20px;
+      border: 1px solid #483434;
+      text-align: justify;
+      padding: 0 20px;
+      margin: 10px 0;
+    }
+    #form {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+    }
+    #ch {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 20px;
+    }
+    #ch input {
+      width: 20px;
+      margin-right: 10px;
+    }
+    button {
+      margin: 0 150px;
+    }
+  </style>
+  <body>
+    <ul>
+      <li><a class="active" href="./index.html">User</a></li>
+      <li><a href="./admin.html">Admin</a></li>
+      <li><a href="#">Distributors</a></li>
+    </ul>
+    <div
+      id="addRestaurant"
+      style="margin-left: 15%; padding: 1px 16px; height: 400px"
+    >
+      <form autocomplete="off">
+        <div id="form">
+          <input id="resName" type="text" placeholder="Restuarant Name" />
+          <input id="resLoc" list="locList" placeholder="Location" />
+          <datalist id="locList"> </datalist>
+          <div id="ch">
+            <input type="checkbox" id="ch1" name="box[]" value="1" />Veg
+            <input type="checkbox" id="ch2" name="box[]" value="2" />Non-Veg
+            <input type="checkbox" id="ch3" name="box[]" value="3" />Snacks
+          </div>
+          <button id="addBtn" class="btn-dark" type="button">ADD</button>
+        </div>
+      </form>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+      integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script>
+      jQuery(function () {
+        for (i = 0; i < localStorage.length; i++) {
+          $("#locList").append(`<option value="${localStorage.key(i)}">`);
+        }
+        $("#resLoc").on("blur", function () {
+          let flag;
+          for (i = 0; i < localStorage.length; i++) {
+            if ($("#resLoc").val() == localStorage.key(i)) flag = 1;
+          }
+          if (flag !== 1) alert("Select Location from List");
+        });
+
+        $("#addBtn").click(function () {
+          let veg;
+          let nonVeg;
+          let snacks;
+          let resName = $("#resName").val().toLowerCase();
+          let resLocation = $("#resLoc").val().toLowerCase();
+          let resDetails = JSON.parse(localStorage.getItem(resLocation));
+
+          for (let i = 0; i < 3; i++) {
+            if ($("#ch1").prop("checked") == true) veg = "yes";
+            else veg = "no";
+            if ($("#ch2").prop("checked") == true) nonVeg = "yes";
+            else nonVeg = "no";
+            if ($("#ch3").prop("checked") == true) snacks = "yes";
+            else snacks = "no";
+          }
+          if (resDetails == null || resDetails[0].resName == 0)
+            resDetails = [
+              {
+                resName: resName,
+                veg: veg,
+                nonVeg: nonVeg,
+                snacks: snacks,
+              },
+            ];
+          else
+            resDetails.push({
+              resName: resName,
+              veg: veg,
+              nonVeg: nonVeg,
+              snacks: snacks,
+            });
+          localStorage.setItem(resLocation, JSON.stringify(resDetails));
+          alert("Restaurant Added");
+        });
+      });
+    </script>
+  </body>
+</html>
