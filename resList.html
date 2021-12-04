@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>index</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="./style.css" />
+    <style>
+      #result {
+        display: grid;
+        grid-template-columns: 300px 300px 300px;
+        grid-template-rows: auto;
+        margin: 10px;
+        align-items: center;
+        justify-content: space-around;
+      }
+      .gridItem {
+        justify-content: center;
+        text-align: center;
+      }
+      img {
+        height: 100px;
+        width: 200px;
+      }
+      a{
+        text-decoration: none;
+      }
+      input{
+        width: 50px;
+        height: 30px;
+        border: 1px solid gray;
+      }
+       .order {
+        color: #064635;
+        font-weight: 500;
+      }
+    </style>
+  </head>
+  <body>
+    <ul>
+      <li><a href="./user.html">User</a></li>
+      <li><a class="active" href="#">Menu</a></l>
+      <li id="logout"><a href="./index.html">Logout</a></li>
+    </ul>
+    <!-- <div style="margin-left: 18%; padding: 1px 16px"><a href="./user.html" id="back">BACK</a></div> -->
+    <div id="result" style="margin-left: 20%; padding: 1px 16px"></div>
+    
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+      integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script>
+      jQuery(function () {
+        let index;
+        let cart = JSON.parse(localStorage.getItem("cart"));
+        let resLoc = cart.loc;
+        let resName = cart.resName;
+        let details = JSON.parse(localStorage.getItem(resLoc));
+        for (i = 0; i < details.length; i++) {
+          if (resName == details[i].resName) index = i;
+        }
+        
+        $("#result").append(` <div>
+          <img src="${details[index].item1.url}" alt="">
+          <p>${details[index].item1.item}</p>
+          <div>
+            <label>Quantity:</label>
+          <input type="number" min="1" max="10" value="1"/>
+          </div>
+          <p>Price per Item/kg:${details[index].item1.price}</p>
+          <button type="button" class="order btn">Place Order</button>
+      </div>`);
+        $("#result").append(` <div >
+          <img src="${details[index].item2.url}" alt="">
+          <p>${details[index].item2.item}</p>
+          <div>
+            <label>Quantity:</label>
+          <input type="number" min="1" max="10" value="1"/>
+          </div>
+          <p>Price per Item/kg:${details[index].item2.price}</p>
+          <button type="button" class="order btn">Place Order</button>
+      </div>`);
+        $("#result").append(` <div>
+          <img src="${details[index].item3.url}" alt="">
+          <p>${details[index].item3.item}</p>
+          <div>
+            <label>Quantity:</label>
+          <input type="number" min="1" max="10" value="1"/>
+          </div>
+          <p>Price per Item/kg:${details[index].item3.price}</p>
+          <button type="button" class="order btn">Place Order</button>
+      </div>`);
+        $("#result").append(` <div>
+          <img src="${details[index].item4.url}" alt="">
+          <p>${details[index].item4.item}</p>
+          <div>
+            <label>Quantity:</label>
+          <input type="number" min="1" max="10" value="1"/>
+          </div>
+          <p>Price per Item/kg:${details[index].item4.price}</p>
+          <button type="button" class="order btn">Place Order</button>
+      </div>`);
+
+      $("#logout").click(function(){
+        localStorage.removeItem("cart");
+      })
+      $(".order").click(function(){
+        let quantity = $(this).siblings("div").find("input").val();
+        let orderItem = $(this).siblings("p:first").text().toUpperCase();
+        let price = $(this).siblings("p:last").text();
+        alert(`Your Order for ${orderItem} of quantity ${quantity} is placed`);
+        setTimeout(alert("Thanks for Ordering...Your order will deliever soon"),3000);
+      })
+
+      });
+    </script>
+  </body>
+</html>

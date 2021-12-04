@@ -21,14 +21,28 @@
     />
     <style>
       #top {
-        background-image: url("./food.avif");
+        background-image: url("./pic/food.avif");
+        color: white;
       }
-      #addlocation {
-        position: absolute;
-        left: 300px;
-        top: 150px;
+      .table {
+        margin: 30px 0;
+        width: 800px;
       }
-      input {
+      form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: left;
+        margin: 20px 0;
+      }
+      form div {
+        display: flex;
+        align-items: center;
+        justify-content: left;
+        margin: 10px;
+        width: 50%;
+      }
+      form div input {
         width: 400px;
         height: 40px;
         border-radius: 20px;
@@ -36,27 +50,20 @@
         text-align: justify;
         padding: 0 20px;
       }
-      #updateRestaurant {
-        position: absolute;
-        /* left: 150px; */
-        top: 300px;
-        width: 100%;
-        background-color: blueviolet;
+      form div label {
+        width: 250px;
       }
-      #updateRestaurant input {
-        margin-left: 280px;
-      }
-      table {
-        margin: 20px;
-        width: 500px;
+      button {
+        margin: 20px 70px;
+        width: 100px;
       }
     </style>
   </head>
   <body>
     <ul>
-      <li><a class="active" href="./index.html">User</a></li>
-      <li><a href="#">Admin</a></li>
-      <li><a href="./distributor.html">Distributors</a></li>
+      <li><a class="active" href="#">Add Restaurant</a></li>
+      <li><a href="./viewRes.html">Restaurant Details</a></li>
+      <li><a href="./index.html">Logout</a></li>
     </ul>
     <div id="top" style="margin-left: 15%; padding: 1px 16px; height: 100px">
       <div id="details">
@@ -65,32 +72,40 @@
       </div>
     </div>
     <div
+      class="mb-3"
       id="addlocation"
       style="margin-left: 15%; padding: 1px 16px; height: 200px"
     >
-      <form id="form-add">
-        <input id="addLoc" type="text" placeholder="Add Location" />
-        <button id="add-btn" class="btn-dark" type="button">ADD</button>
-        <div class="location"></div>
-      </form>
-    </div>
-    <div
-      id="updateRestaurant"
-      style="margin-left: 15%; padding: 1px 16px; height: 200px"
-    >
-      <form id="form-search">
-        <input id="searchLoc" type="text" placeholder="Search Location" />
-        <button id="search-btn" class="btn-dark" type="button">Search</button>
-        <table>
-          <thead>
-            <th>Location</th>
-            <th>Restaurant</th>
-            <th>Veg</th>
-            <th>Non-Veg</th>
-            <th>Snack</th>
-          </thead>
-          <tbody class="tbody"></tbody>
-        </table>
+      <form class="form">
+        <div>
+          <label class="form-label" for="addLoc">Add Location</label>
+          <input
+            class="form-control"
+            id="addLoc"
+            type="text"
+            placeholder="Location"
+            autocomplete="off"
+          />
+        </div>
+        <div>
+          <label class="form-label" for="addLoc">Add Restaurant Name</label>
+          <input
+            class="form-control"
+            type="text"
+            id="addRes"
+            placeholder="Restaurant Name"
+            autocomplete="off"
+          />
+        </div>
+        <div>
+          <label class="form-label" for="contractFrom">Contract From</label>
+          <input class="form-control" type="date" id="contractFrom" />
+        </div>
+        <div>
+          <label class="form-label" for="contractTo">Contract From</label>
+          <input class="form-control" type="date" id="contractTo" />
+        </div>
+        <button id="addBtn" class="btn-dark" type="button">ADD</button>
       </form>
     </div>
     <script
@@ -105,45 +120,151 @@
       referrerpolicy="no-referrer"
     ></script>
     <script>
-      jQuery(function () {
-        let loc = $("#addLoc");
-        $("#add-btn").click(function () {
-          let resDetails = [
-            {
-              resName: 0,
-              veg: 0,
-              nonVeg: 0,
-              snacks: 0,
-            },
-          ];
-          localStorage.setItem(
-            loc.val().toLowerCase(),
-            JSON.stringify(resDetails)
-          );
-          alert("Location Added");
+      jQuery(function ($) {
+        $("#addLoc").blur(function () {
+          checkLoc();
         });
-        $("#search-btn").click(function () {
-          $(".tbody").html("");
-          let searchLoc = $("#searchLoc").val().toLowerCase();
-          let lsLocation = JSON.parse(localStorage.getItem(searchLoc));
-          for (i = 0; i < lsLocation.length; i++) {
-            $(".tbody").append(` <tr>
-            <td>${searchLoc}</td>
-          <td>${lsLocation[i].resName}</td>
-          <td>${lsLocation[i].veg}</td>
-          <td>${lsLocation[i].nonVeg}</td>
-          <td>${lsLocation[i].snacks}</td>
-          <td><button type="button" data-index="${i}" class="btn-dark del">Delete</button></td>
-        </tr>`);
-            $("#searchLoc").val("");
+        $("#addRes").blur(function () {
+          checkRes();
+        });
+        $("#contractFrom").blur(function () {
+          checkFromDate();
+        });
+        $("#contractTo").blur(function () {
+          checkToDate();
+        });
+
+        $("#addBtn").click(function () {
+          let loc = $("#addLoc").val().toLowerCase();
+          let resDetails = JSON.parse(localStorage.getItem(loc));
+          let contractFrom;
+          let contractTo;
+
+          checkLoc();
+          checkToDate();
+          checkFromDate();
+          checkRes();
+          let fd = new Date($("#contractFrom").val());
+          if (fd.getDate() < 10) {
+            contractFrom =
+              fd.getFullYear() +
+              "-" +
+              (fd.getMonth() + 1) +
+              "-" +
+              "0" +
+              fd.getDate();
+          } else {
+            contractFrom =
+              fd.getFullYear() + "-" + (fd.getMonth() + 1) + "-" + fd.getDate();
           }
-          $(".del").click(function () {
-            let index = $(this).attr("data-index");
-            $(this).closest("tr").remove();
-            lsLocation.splice(index, 1);
-            localStorage.setItem(searchLoc, JSON.stringify(lsLocation));
-          });
+          let td = new Date($("#contractTo").val());
+          if (td.getDate() < 10) {
+            contractTo =
+              td.getFullYear() +
+              "-" +
+              (td.getMonth() + 1) +
+              "-" +
+              "0" +
+              td.getDate();
+          } else {
+            contractTo =
+              td.getFullYear() + "-" + (td.getMonth() + 1) + "-" + td.getDate();
+          }
+          if (
+            checkRes() == true &&
+            checkToDate() == true &&
+            checkLoc() == true &&
+            checkFromDate() == true &&
+            checkResDuplicate() == true
+          ) {
+            if (resDetails == null) {
+              resDetails = [
+                {
+                  resName: $("#addRes").val().toLowerCase(),
+                  contractFrom: contractFrom,
+                  contractTo: contractTo,
+                },
+              ];
+            } else {
+              resDetails.push({
+                resName: $("#addRes").val().toLowerCase(),
+                contractFrom: contractFrom,
+                contractTo: contractTo,
+              });
+            }
+
+            localStorage.setItem(loc, JSON.stringify(resDetails));
+            alert("Location Added");
+            $("form").trigger("reset");
+            removeValid();
+          }
         });
+
+        function checkLoc() {
+          if ($("#addLoc").val() == "") {
+            $("#addLoc").addClass("is-invalid");
+            return false;
+          } else {
+            $("#addLoc").addClass("is-valid");
+            $("#addLoc").removeClass("is-invalid");
+            return true;
+          }
+        }
+        function checkRes() {
+          if ($("#addRes").val() == "") {
+            $("#addRes").addClass("is-invalid");
+            return false;
+          } else {
+            $("#addRes").addClass("is-valid");
+            $("#addRes").removeClass("is-invalid");
+            return true;
+          }
+        }
+        function checkFromDate() {
+          if ($("#contractFrom").val() == "") {
+            $("#contractFrom").addClass("is-invalid");
+            return false;
+          } else {
+            $("#contractFrom").addClass("is-valid");
+            $("#contractFrom").removeClass("is-invalid");
+            return true;
+          }
+        }
+
+        function checkToDate() {
+          if ($("#contractTo").val() == "") {
+            $("#contractTo").addClass("is-invalid");
+            return false;
+          } else {
+            $("#contractTo").addClass("is-valid");
+            $("#contractTo").removeClass("is-invalid");
+            return true;
+          }
+        }
+
+        function removeValid() {
+          $("#contractTo").removeClass("is-valid");
+          $("#contractFrom").removeClass("is-valid");
+          $("#addRes").removeClass("is-valid");
+          $("#addLoc").removeClass("is-valid");
+        }
+        function checkResDuplicate() {
+          let flag = 0;
+          let loc = $("#addLoc").val().toLowerCase();
+          let resDetails = JSON.parse(localStorage.getItem(loc));
+          if (resDetails == null) flag = 0;
+          else {
+            for (let i = 0; i < resDetails.length; i++) {
+              if ($("#addRes").val() == resDetails[i].resName) {
+                $("#addRes").addClass("is-invalid");
+                alert("Restaurant Already Exists");
+                flag = 1;
+              }
+            }
+          }
+          if (flag == 0) return true;
+          else return false;
+        }
       });
     </script>
   </body>

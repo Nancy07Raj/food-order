@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>index</title>
+    <title>Restaurant Admin</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -17,57 +17,86 @@
     #addRestaurant {
       position: absolute;
       top: 50px;
-      background-color: #c7bea2;
       left: 300px;
     }
     input {
-      width: 400px;
-      height: 40px;
-      border-radius: 20px;
+      width: 200px;
+      height: 30px;
+      border-radius: 10px;
       border: 1px solid #483434;
       text-align: justify;
       padding: 0 20px;
-      margin: 10px 0;
-    }
-    #form {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: flex-start;
-    }
-    #ch {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 20px;
-    }
-    #ch input {
-      width: 20px;
-      margin-right: 10px;
+      margin: 10px;
+      overflow: hidden;
     }
     button {
-      margin: 0 150px;
+      margin: 20px 380px;
+    }
+    #food {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    #food label {
+      width: 100px;
     }
   </style>
   <body>
     <ul>
-      <li><a class="active" href="./index.html">User</a></li>
-      <li><a href="./admin.html">Admin</a></li>
-      <li><a href="#">Distributors</a></li>
+      <li><a class="active" href="#">Restaurant Admin</a></li>
+      <li><a href="./index.html">Logout</a></li>
     </ul>
-    <div
-      id="addRestaurant"
-      style="margin-left: 15%; padding: 1px 16px; height: 400px"
-    >
+    <div id="addRestaurant" style="margin-left: 5%; padding: 1px 16px">
       <form autocomplete="off">
         <div id="form">
-          <input id="resName" type="text" placeholder="Restuarant Name" />
-          <input id="resLoc" list="locList" placeholder="Location" />
-          <datalist id="locList"> </datalist>
-          <div id="ch">
-            <input type="checkbox" id="ch1" name="box[]" value="1" />Veg
-            <input type="checkbox" id="ch2" name="box[]" value="2" />Non-Veg
-            <input type="checkbox" id="ch3" name="box[]" value="3" />Snacks
+          <div id="food">
+            <label class="form-label" for="resLoc">Restaurant Location</label>
+            <input
+              style="width: 300px"
+              id="resLoc"
+              list="locList"
+              placeholder="Location"
+            />
+            <datalist id="locList"> </datalist>
+          </div>
+          <div id="food">
+            <label class="form-label" for="resName">Restaurant Name</label>
+            <input
+              style="width: 300px"
+              id="resName"
+              list="rList"
+              placeholder="Restuarant Name"
+            />
+            <datalist id="rList"></datalist>
+          </div>
+          <div id="food">
+            <label class="form-label" for="item1">Item 1</label>
+            <input type="text" id="item1" placeholder="Item 1" />
+            <label class="form-label" for="item1Url">Image URL</label>
+            <input type="url" id="item1Url" placeholder="URL" />
+            <input type="number" id="price1" placeholder="Price per item/1Kg" />
+          </div>
+          <div id="food">
+            <label class="form-label" for="item2">Item 2</label>
+            <input type="text" id="item2" placeholder="Item 2" />
+            <label class="form-label" for="item2Url">Image URL</label>
+            <input type="url" id="item2Url" placeholder="URL" />
+            <input type="number" id="price2" placeholder="Price per item/1Kg" />
+          </div>
+          <div id="food">
+            <label class="form-label" for="item3">Item 3</label>
+            <input type="text" id="item3" placeholder="Item 3" />
+            <label class="form-label" for="item3Url">Image URL</label>
+            <input type="url" id="item3Url" placeholder="URL" />
+            <input type="number" id="price3" placeholder="Price per item/1Kg" />
+          </div>
+          <div id="food">
+            <label class="form-label" for="item4">Item 4</label>
+            <input type="text" id="item4" placeholder="Item 4" />
+            <label class="form-label" for="item4Url">Image URL</label>
+            <input type="url" id="item4Url" placeholder="URL" />
+            <input type="number" id="price4" placeholder="Price per item/1Kg" />
           </div>
           <button id="addBtn" class="btn-dark" type="button">ADD</button>
         </div>
@@ -90,49 +119,100 @@
         for (i = 0; i < localStorage.length; i++) {
           $("#locList").append(`<option value="${localStorage.key(i)}">`);
         }
+
+        $("#resName").on({
+          blur: function () {
+            checkResName();
+          },
+          focus: function () {
+            $("#rList").html("");
+            let resNameValue = $("#resLoc").val().toLowerCase();
+            let resList = JSON.parse(localStorage.getItem(resNameValue));
+            for (i = 0; i < resList.length; i++) {
+              $("#rList").append(`<option value="${resList[i].resName}">`);
+            }
+          },
+        });
+
         $("#resLoc").on("blur", function () {
-          let flag;
-          for (i = 0; i < localStorage.length; i++) {
-            if ($("#resLoc").val() == localStorage.key(i)) flag = 1;
-          }
-          if (flag !== 1) alert("Select Location from List");
+          checkLoc();
         });
 
         $("#addBtn").click(function () {
-          let veg;
-          let nonVeg;
-          let snacks;
+          alert("button");
+          let item1 = $("#item1");
+          let item1url = $("#item1Url");
+          let price1 = $("#price1");
+
+          let resIndex;
           let resName = $("#resName").val().toLowerCase();
           let resLocation = $("#resLoc").val().toLowerCase();
           let resDetails = JSON.parse(localStorage.getItem(resLocation));
-
-          for (let i = 0; i < 3; i++) {
-            if ($("#ch1").prop("checked") == true) veg = "yes";
-            else veg = "no";
-            if ($("#ch2").prop("checked") == true) nonVeg = "yes";
-            else nonVeg = "no";
-            if ($("#ch3").prop("checked") == true) snacks = "yes";
-            else snacks = "no";
-          }
-          if (resDetails == null || resDetails[0].resName == 0)
-            resDetails = [
-              {
-                resName: resName,
-                veg: veg,
-                nonVeg: nonVeg,
-                snacks: snacks,
+          checkResName();
+          checkLoc();
+          if (checkLoc() == true && checkResName() == true) {
+            for (let i = 0; i < resDetails.length; i++) {
+              if (resName == resDetails[i].resName) {
+                resIndex = i;
+              }
+            }
+            alert(resIndex);
+            resDetails[resIndex] = {
+              resName: resDetails[resIndex].resName,
+              contractFrom: resDetails[resIndex].contractFrom,
+              contractTo: resDetails[resIndex].contractTo,
+              item1: {
+                item: $("#item1").val(),
+                url: $("#item1Url").val(),
+                price: $("#price1").val(),
               },
-            ];
-          else
-            resDetails.push({
-              resName: resName,
-              veg: veg,
-              nonVeg: nonVeg,
-              snacks: snacks,
-            });
-          localStorage.setItem(resLocation, JSON.stringify(resDetails));
-          alert("Restaurant Added");
+              item2: {
+                item: $("#item2").val(),
+                url: $("#item2Url").val(),
+                price: $("#price2").val(),
+              },
+              item3: {
+                item: $("#item3").val(),
+                url: $("#item3Url").val(),
+                price: $("#price3").val(),
+              },
+              item4: {
+                item: $("#item4").val(),
+                url: $("#item4Url").val(),
+                price: $("#price4").val(),
+              },
+            };
+
+            localStorage.setItem(resLocation, JSON.stringify(resDetails));
+            alert("Restaurant Added");
+          }
         });
+        function checkResName() {
+          let flag = 0;
+          let resName = $("#resName").val().toLowerCase();
+          let resLoc = $("#resLoc").val().toLowerCase();
+          let resList = JSON.parse(localStorage.getItem(resLoc));
+          for (i = 0; i < resList.length; i++) {
+            if (resName == resList[i].resName) {
+              flag = 1;
+            }
+          }
+          if (flag == 0) {
+            alert("Select Restaurant from List");
+            return false;
+          } else return true;
+        }
+        function checkLoc() {
+          let flag;
+          for (i = 0; i < localStorage.length; i++) {
+            if ($("#resLoc").val() == localStorage.key(i))
+              flag = localStorage.key(i);
+          }
+          if (flag == null || $("#resLoc").val() == null) {
+            alert("Select Location from List");
+            return false;
+          } else return true;
+        }
       });
     </script>
   </body>
