@@ -58,6 +58,7 @@
           id="loc"
           placeholder="Location"
           autocomplete="off"
+          autofocus
         />
         <input
           class="form-control"
@@ -107,18 +108,18 @@
                 <td>${resDetails[i].resName}</td>
                 <td>${resDetails[i].contractFrom}</td>
                 <td>${resDetails[i].contractTo}</td>
-                <td> <button type="button" class="update">Update </button></td>
+                <td><button type="button" data-index="${i}" class="update">Update </button></td>
                 <td><button type="button" data-index="${i}" class="del btn-dark">Delete</button></td>
             </tr>`);
               flag = 1;
             } else if (res == resDetails[i].resName) {
               let index = i;
               $("#tbody").append(` <tr>
-                <td>${loc}</td>
+                <td> ${loc}</td>
                 <td>${res}</td>
                 <td>${resDetails[index].contractFrom}</td>
                 <td>${resDetails[index].contractTo}</td>
-                <td> <button type="button" class="update">Update </button></td>
+                <td><button type="button" data-index=${index} class="update">Update </button></td>
                 <td><button type="button" data-index="${index}" class="del btn-dark">Delete</button></td>
             </tr>`);
               flag = 1;
@@ -129,78 +130,137 @@
           }
           $(".del").click(function () {
             let index = $(this).attr("data-index");
-            let loc = $("#loc").val().toLowerCase();
+            let row = $(this).closest("tr");
+            let loc = row.children().eq(0).text();
             let resDetails = JSON.parse(localStorage.getItem(loc));
             $(this).closest("tr").remove();
             resDetails.splice(index, 1);
             localStorage.setItem(loc, JSON.stringify(resDetails));
           });
-          $(".update").click(function () {
-            let row = $(this).closest("tr");
-            row
-              .children()
-              .eq(0)
-              .wrapInner(
-                `<input type="text" id="edtLoc" value =${row
-                  .children()
-                  .eq(1)
-                  .text()}></input>`
-              );
-            row
-              .children()
-              .eq(1)
-              .wrapInner(
-                `<input type="text" id="edtResName" value =${row
-                  .children()
-                  .eq(1)
-                  .text()}></input>`
-              );
-            row
-              .children()
-              .eq(2)
-              .wrapInner(
-                `<input type="date" id="edtCFrom" value =${row
-                  .children()
-                  .eq(2)
-                  .text()}></input>`
-              );
-            row
-              .children()
-              .eq(3)
-              .wrapInner(
-                `<input type="date" id="edtCTo" value =${row
-                  .children()
-                  .eq(3)
-                  .text()}></input>`
-              );
-            row
-              .children()
-              .eq(4)
-              .html('<button type="button" class="save">SAVE </button>');
+          $(document)
+            .find(".update")
+            .click(function () {
+              let row = $(this).closest("tr");
+              let oldLoc = row.children().eq(0).text();
+              let oldRes = row.children().eq(1).text();
+              let oldCFrom = row.children().eq(2).text();
+              let oldCTo = row.children().eq(3).text();
+              let oldLsIndex = $(this).attr("data-index");
 
-            $(".save").click(function () {
-              let updateLoc = $("#edtLoc").val().toLowerCase();
-              let updateResName = $("#edtResName").val().toLowerCase();
-              let updateContractFrom = $("#edtCFrom").val().toLowerCase();
-              let updateContractTo = $("#edtCTo").val().toLowerCase();
-              if (updateLoc == loc) {
-                let data = JSON.parse(localStorage.getItem(loc));
-                for (i = 0; i < data.length; i++) {
-                  if (row.children().eq(1).text() == data[i].resName) {
+              row
+                .children()
+                .eq(0)
+                .wrapInner(
+                  `<input type="text" id="edtLoc" value =${row
+                    .children()
+                    .eq(0)
+                    .text()}></input>`
+                );
+              row
+                .children()
+                .eq(1)
+                .wrapInner(
+                  `<input type="text" id="edtResName" value =${row
+                    .children()
+                    .eq(1)
+                    .text()}></input>`
+                );
+              row
+                .children()
+                .eq(2)
+                .wrapInner(
+                  `<input type="date" id="edtCFrom" value =${row
+                    .children()
+                    .eq(2)
+                    .text()}></input>`
+                );
+              row
+                .children()
+                .eq(3)
+                .wrapInner(
+                  `<input type="date" id="edtCTo" value =${row
+                    .children()
+                    .eq(3)
+                    .text()}></input>`
+                );
+              row
+                .children()
+                .eq(4)
+                .html('<button type="button" class="save">SAVE </button>');
+
+              $(".save").click(function () {
+                let updateLoc = $("#edtLoc").val().toLowerCase();
+                let updateResName = $("#edtResName").val().toLowerCase();
+                let updateContractFrom = $("#edtCFrom").val().toLowerCase();
+                let updateContractTo = $("#edtCTo").val().toLowerCase();
+                let index;
+                if (updateLoc == oldLoc) {
+                  let data = JSON.parse(localStorage.getItem(oldLoc));
+                  for (i = 0; i < data.length; i++) {
+                    if (oldRes == data[i].resName) {
+                      index = i;
+                    }
                   }
+                  if (data[index].item1 !== 0) {
+                    data[index] = {
+                      resName: updateResName,
+                      contractFrom: updateContractFrom,
+                      contractTo: updateContractTo,
+                      item1: {
+                        item: data[index].item1.item,
+                        url: data[index].item1.url,
+                        price: data[index].item1.price,
+                      },
+                      item2: {
+                        item: data[index].item2.item,
+                        url: data[index].item2.url,
+                        price: data[index].item2.price,
+                      },
+                      item3: {
+                        item: data[index].item3.item,
+                        url: data[index].item3.url,
+                        price: data[index].item3.price,
+                      },
+                      item4: {
+                        item: data[index].item4.item,
+                        url: data[index].item4.url,
+                        price: data[index].item4.price,
+                      },
+                    };
+                  } else {
+                    data[index] = {
+                      resName: updateResName,
+                      contractFrom: updateContractFrom,
+                      contractTo: updateContractTo,
+                      item1: 0,
+                    };
+                  }
+                  localStorage.setItem(oldLoc, JSON.stringify(data));
+                } else {
+                  let oldLocData = JSON.parse(localStorage.getItem(oldLoc));
+                  oldLocData.splice(oldLsIndex, 1);
+                  localStorage.setItem(oldLoc, JSON.stringify(oldLocData));
+                  let data = JSON.parse(localStorage.getItem(updateLoc));
+                  data.push({
+                    resName: updateResName,
+                    contractFrom: updateContractFrom,
+                    contractTo: updateContractTo,
+                    item1: 0,
+                  });
+                  localStorage.setItem(updateLoc, JSON.stringify(data));
                 }
-                localStorage.setItem(loc, JSON.stringify(data));
-              } else {
-                let data = JSON.parse(localStorage.getItem(updateLoc));
-                data.push({
-                  resName: updateResName,
-                  contractFrom: updateContractFrom,
-                  contractTo: updateContractTo,
-                });
-                localStorage.setItem(updateLoc, JSON.stringify(data));
-              }
+                row.children().eq(0).text(updateLoc);
+                row.children().eq(1).text(updateResName);
+                row.children().eq(2).text(updateContractFrom);
+                row.children().eq(3).text(updateContractTo);
+                row
+                  .children()
+                  .eq(4)
+                  .html(
+                    '<button type="button" class="update">Update </button>'
+                  );
+              });
             });
-          });
           $("form").trigger("reset");
         });
       });

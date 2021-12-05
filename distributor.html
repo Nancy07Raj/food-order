@@ -30,7 +30,7 @@
       overflow: hidden;
     }
     button {
-      margin: 20px 380px;
+      margin: 20px 100px;
     }
     #food {
       display: flex;
@@ -98,7 +98,11 @@
             <input type="url" id="item4Url" placeholder="URL" />
             <input type="number" id="price4" placeholder="Price per item/1Kg" />
           </div>
-          <button id="addBtn" class="btn-dark" type="button">ADD</button>
+          <div id="btn">
+            <button id="addBtn" class="btn-dark" type="button">ADD</button>
+            <button type="reset" class="btn-dark">Reset</button>
+          </div>
+          <p>Note: set zero to empty field</p>
         </div>
       </form>
     </div>
@@ -139,7 +143,6 @@
         });
 
         $("#addBtn").click(function () {
-          alert("button");
           let item1 = $("#item1");
           let item1url = $("#item1Url");
           let price1 = $("#price1");
@@ -156,7 +159,7 @@
                 resIndex = i;
               }
             }
-            alert(resIndex);
+
             resDetails[resIndex] = {
               resName: resDetails[resIndex].resName,
               contractFrom: resDetails[resIndex].contractFrom,
