@@ -28,10 +28,10 @@
       display: flex;
       align-items: center;
       justify-content: left;
-      margin: 20px 0;
+      margin: 20px;
     }
-    form input {
-      width: 400px;
+    form select {
+      width: 300px;
       height: 40px;
       border-radius: 20px;
       border: 1px solid #ffab4c;
@@ -42,7 +42,8 @@
   </style>
   <body>
     <ul>
-      <li><a href="./admin.html">Add Restaurant</a></li>
+      <li><a href="./admin.html">Admin</a></li>
+      <li><a href="./addRes.html">Add Restaurant</a></li>
       <li><a class="active" href="#">Restaurant Details</a></li>
       <li><a href="./index.html">Logout</a></li>
     </ul>
@@ -52,20 +53,12 @@
       style="margin-left: 18%; padding: 1px 16px; height: 200px"
     >
       <form id="form">
-        <input
-          class="form-control"
-          type="text"
-          id="loc"
-          placeholder="Location"
-          autocomplete="off"
-          autofocus
-        />
-        <input
-          class="form-control"
-          type="text"
-          id="res"
-          placeholder="Restaurant Name"
-        />
+        <select id="loc" autofocus type="text">
+          <option value="">Select Location</option>
+        </select>
+        <select id="res" type="text">
+          <option value="">Select Restaurant</option>
+        </select>
         <button class="search btn-dark" type="button">Search</button>
       </form>
     </div>
@@ -95,6 +88,17 @@
     ></script>
     <script>
       jQuery(function () {
+        for (i = 0; i < localStorage.length; i++)
+          $("#loc").append(`<option>${localStorage.key(i)}</option>`);
+        $("#loc").on("change", function () {
+          $("#res option:not(:first)").remove();
+          if ($("#loc").val() == "") alert("Enter Location");
+          else {
+            let resDetails = JSON.parse(localStorage.getItem($("#loc").val()));
+            for (i = 0; i < resDetails.length; i++)
+              $("#res").append(`<option>${resDetails[i].resName}</option>`);
+          }
+        });
         $(".search").click(function () {
           let loc = $("#loc").val().toLowerCase();
           if (loc == "") alert("Enter location");
